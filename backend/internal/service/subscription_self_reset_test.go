@@ -56,6 +56,9 @@ func TestSelfResetPeriodKey(t *testing.T) {
 	if got := svc.selfResetPeriodKey(now, SelfResetPeriodCalendarMonth, starts); got != "2026-11" {
 		t.Fatalf("calendar month key = %q", got)
 	}
+	if got := svc.selfResetPeriodKey(now, SelfResetPeriodCalendarWeek, starts); got != "2026-W46" {
+		t.Fatalf("calendar week key = %q", got)
+	}
 	if got := svc.selfResetPeriodKey(now, SelfResetPeriodRolling30D, starts); got != "rolling_30d" {
 		t.Fatalf("rolling key = %q", got)
 	}

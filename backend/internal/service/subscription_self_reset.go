@@ -16,6 +16,7 @@ const (
 	SettingKeySubscriptionSelfReset = "subscription_self_reset"
 
 	SelfResetPeriodCalendarMonth = "calendar_month"
+	SelfResetPeriodCalendarWeek  = "calendar_week"
 	SelfResetPeriodRolling30D    = "rolling_30d"
 	SelfResetPeriodCycle         = "subscription_cycle"
 
@@ -71,7 +72,7 @@ func (s *SelfResetSettings) Normalize() {
 		s.MaxResets = 100
 	}
 	switch s.Period {
-	case SelfResetPeriodCalendarMonth, SelfResetPeriodRolling30D, SelfResetPeriodCycle:
+	case SelfResetPeriodCalendarMonth, SelfResetPeriodCalendarWeek, SelfResetPeriodRolling30D, SelfResetPeriodCycle:
 	default:
 		s.Period = SelfResetPeriodCalendarMonth
 	}
@@ -199,6 +200,9 @@ func (s *SubscriptionService) UpdateSelfResetSettings(ctx context.Context, cfg S
 
 func (s *SubscriptionService) selfResetPeriodKey(now time.Time, period string, startsAt time.Time) string {
 	switch period {
+	case SelfResetPeriodCalendarWeek:
+		year, week := now.In(timezone.Location()).ISOWeek()
+		return fmt.Sprintf("%d-W%02d", year, week)
 	case SelfResetPeriodRolling30D:
 		return "rolling_30d"
 	case SelfResetPeriodCycle:
@@ -210,6 +214,14 @@ func (s *SubscriptionService) selfResetPeriodKey(now time.Time, period string, s
 
 func (s *SubscriptionService) selfResetPeriodResetsAt(now time.Time, period string, startsAt time.Time) string {
 	switch period {
+	case SelfResetPeriodCalendarWeek:
+		loc := timezone.Location()
+		t := now.In(loc)
+		weekday := int(t.Weekday())
+		if weekday == 0 {
+			weekday = 7
+		}
+		return time.Date(t.Year(), t.Month(), t.Day()+(8-weekday), 0, 0, 0, 0, loc).Format(time.RFC3339)
 	case SelfResetPeriodRolling30D:
 		return now.Add(30 * 24 * time.Hour).Format(time.RFC3339)
 	case SelfResetPeriodCycle:

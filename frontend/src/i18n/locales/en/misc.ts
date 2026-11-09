@@ -138,15 +138,21 @@ export default {
     quotaEndsIn: 'Quota ends in {time}',
     selfReset: {
       title: 'Self-reset quota',
-      remaining: '{remaining}/{max} resets left this month',
+      remaining: '{period}: {remaining}/{max} resets left',
       action: 'Reset daily quota',
       resetting: 'Resetting...',
       confirm:
-        'Daily quota used: ${used} / ${limit}. Use 1 reset to clear the daily quota? {remaining}/{max} resets left this month.',
+        'Daily quota used: ${used} / ${limit}. Use 1 reset to clear the daily quota? {period}: {remaining}/{max} resets left.',
       zeroUsageConfirm:
-        'Daily usage is 0. Resetting will not add quota but still consumes 1 reset. {remaining}/{max} resets left this month. Continue?',
-      success: 'Reset successful. {remaining}/{max} resets left this month',
+        'Daily usage is 0. Resetting will not add quota but still consumes 1 reset. {period}: {remaining}/{max} resets left. Continue?',
+      success: 'Reset successful. {period}: {remaining}/{max} resets left',
       failed: 'Reset failed. Please try again later',
+      period: {
+        week: 'This week',
+        month: 'This month',
+        rolling30d: 'Last 30 days',
+        cycle: 'This cycle'
+      },
       reason: {
         disabled: 'Self-reset is disabled by the administrator',
         inactive: 'Subscription is inactive or expired',
