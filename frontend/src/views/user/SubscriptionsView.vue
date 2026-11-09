@@ -240,6 +240,13 @@
                 </div>
               </div>
             </div>
+
+            <SelfResetQuotaButton
+              :subscription-id="subscription.id"
+              :daily-usage="subscription.daily_usage_usd || 0"
+              :daily-limit="subscription.group?.daily_limit_usd || 0"
+              @reset="loadSubscriptions"
+            />
           </div>
         </div>
       </div>
@@ -256,6 +263,7 @@ import subscriptionsAPI from '@/api/subscriptions'
 import type { UserSubscription } from '@/types'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import Icon from '@/components/icons/Icon.vue'
+import SelfResetQuotaButton from '@/components/user/SelfResetQuotaButton.vue'
 import { formatDateTimeToMinute } from '@/utils/format'
 import { hasPeakRate, formatPeakRateWindow, serverTimezoneLabel } from '@/utils/peak-rate'
 import { platformBorderClass, platformBadgeClass, platformButtonClass, platformLabel } from '@/utils/platformColors'

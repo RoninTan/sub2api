@@ -133,6 +133,24 @@ export default {
     expiresOn: '{date} 到期',
     resetIn: '{time} 后重置',
     quotaEndsIn: '额度将在 {time} 后结束',
+    selfReset: {
+      title: '自助重置额度',
+      remaining: '本月剩余 {remaining}/{max} 次',
+      action: '重置日额度',
+      resetting: '重置中...',
+      confirm:
+        '当前日额度已用 ${used} / ${limit}。确认消耗 1 次机会重置日额度？本月还剩 {remaining}/{max} 次。',
+      zeroUsageConfirm:
+        '当前日额度用量为 0，重置不会增加额度，但仍会消耗 1 次机会。本月还剩 {remaining}/{max} 次，确认继续？',
+      success: '重置成功，本月剩余 {remaining}/{max} 次',
+      failed: '重置失败，请稍后重试',
+      reason: {
+        disabled: '管理员已关闭自助重置',
+        inactive: '订阅未生效或已过期',
+        notSubscription: '该订阅类型不支持自助重置',
+        noResets: '本月重置次数已用完'
+      }
+    },
     windowNotActive: '等待首次使用',
     usageOf: '已用 {used} / {limit}'
   },

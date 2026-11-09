@@ -140,6 +140,9 @@ func RegisterUserRoutes(
 			subscriptions.GET("/active", h.Subscription.GetActive)
 			subscriptions.GET("/progress", h.Subscription.GetProgress)
 			subscriptions.GET("/summary", h.Subscription.GetSummary)
+			// 订阅额度自助重置（次数在服务端强制校验）
+			subscriptions.GET("/self-reset/status", h.Subscription.GetSelfResetStatus)
+			subscriptions.POST("/self-reset/:id/quota", h.Subscription.SelfResetQuota)
 		}
 
 		// 渠道监控（用户只读）
