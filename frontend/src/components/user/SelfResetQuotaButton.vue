@@ -57,6 +57,8 @@ const reasonText = computed(() => {
       return t('userSubscriptions.selfReset.reason.inactive')
     case 'not_subscription':
       return t('userSubscriptions.selfReset.reason.notSubscription')
+    case 'no_daily_limit':
+      return t('userSubscriptions.selfReset.reason.noDailyLimit')
     case 'no_resets':
       return t('userSubscriptions.selfReset.reason.noResets')
     default:

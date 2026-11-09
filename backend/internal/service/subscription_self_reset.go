@@ -295,6 +295,8 @@ func (s *SubscriptionService) GetSelfResetStatus(ctx context.Context, userID int
 			status.Reason = "inactive"
 		case sub.Group == nil || !sub.Group.IsSubscriptionType():
 			status.Reason = "not_subscription"
+		case cfg.Scope == SelfResetScopeDaily && (sub.Group.DailyLimitUSD == nil || *sub.Group.DailyLimitUSD <= 0):
+			status.Reason = "no_daily_limit"
 		case status.Remaining <= 0:
 			status.Reason = "no_resets"
 		default:

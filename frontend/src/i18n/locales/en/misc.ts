@@ -151,6 +151,7 @@ export default {
         disabled: 'Self-reset is disabled by the administrator',
         inactive: 'Subscription is inactive or expired',
         notSubscription: 'This subscription type does not support self-reset',
+        noDailyLimit: 'This subscription has no daily quota configured',
         noResets: 'No resets left this month'
       }
     },

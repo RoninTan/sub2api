@@ -148,6 +148,7 @@ export default {
         disabled: '管理员已关闭自助重置',
         inactive: '订阅未生效或已过期',
         notSubscription: '该订阅类型不支持自助重置',
+        noDailyLimit: '该订阅未配置日额度',
         noResets: '本月重置次数已用完'
       }
     },
