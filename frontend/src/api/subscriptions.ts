@@ -67,10 +67,61 @@ export async function getSubscriptionProgress(
   return response.data
 }
 
+/**
+ * Self-reset allowance for one subscription.
+ */
+export interface SelfResetStatus {
+  subscription_id: number
+  group_id: number
+  group_name: string
+  enabled: boolean
+  max_resets: number
+  used: number
+  remaining: number
+  period: string
+  period_key: string
+  period_resets_at: string
+  scope: string
+  can_reset: boolean
+  reason: string
+  daily_usage_usd: number
+  daily_limit_usd?: number
+}
+
+export interface SelfResetResult {
+  subscription_id: number
+  used: number
+  remaining: number
+  max_resets: number
+  period: string
+  period_key: string
+  scope: string
+}
+
+/**
+ * Get current user's self-reset allowance per active subscription
+ */
+export async function getSelfResetStatus(): Promise<SelfResetStatus[]> {
+  const response = await apiClient.get<SelfResetStatus[]>('/subscriptions/self-reset/status')
+  return response.data
+}
+
+/**
+ * Consume one self-reset chance for a subscription
+ */
+export async function selfResetQuota(subscriptionId: number): Promise<SelfResetResult> {
+  const response = await apiClient.post<SelfResetResult>(
+    `/subscriptions/self-reset/${subscriptionId}/quota`
+  )
+  return response.data
+}
+
 export default {
   getMySubscriptions,
   getActiveSubscriptions,
   getSubscriptionsProgress,
   getSubscriptionSummary,
-  getSubscriptionProgress
+  getSubscriptionProgress,
+  getSelfResetStatus,
+  selfResetQuota
 }

@@ -350,6 +350,29 @@ func (h *SubscriptionHandler) ListByUser(c *gin.Context) {
 	response.Success(c, adminSubscriptionResponse(c, out))
 }
 
+// GetSelfResetSettings returns the global subscription self-reset configuration.
+// GET /api/v1/admin/settings/subscription-self-reset
+func (h *SubscriptionHandler) GetSelfResetSettings(c *gin.Context) {
+	cfg := h.subscriptionService.GetSelfResetSettings(c.Request.Context())
+	response.Success(c, cfg)
+}
+
+// UpdateSelfResetSettings updates the global subscription self-reset configuration.
+// PUT /api/v1/admin/settings/subscription-self-reset
+func (h *SubscriptionHandler) UpdateSelfResetSettings(c *gin.Context) {
+	var req service.SelfResetSettings
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "Invalid request: "+err.Error())
+		return
+	}
+	cfg, err := h.subscriptionService.UpdateSelfResetSettings(c.Request.Context(), req)
+	if err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	response.Success(c, cfg)
+}
+
 // Helper function to get admin ID from context
 func getAdminIDFromContext(c *gin.Context) int64 {
 	subject, ok := middleware2.GetAuthSubjectFromContext(c)

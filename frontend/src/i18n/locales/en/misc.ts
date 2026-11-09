@@ -136,6 +136,25 @@ export default {
     expiresOn: 'Expires on {date}',
     resetIn: 'Resets in {time}',
     quotaEndsIn: 'Quota ends in {time}',
+    selfReset: {
+      title: 'Self-reset quota',
+      remaining: '{remaining}/{max} resets left this month',
+      action: 'Reset daily quota',
+      resetting: 'Resetting...',
+      confirm:
+        'Daily quota used: ${used} / ${limit}. Use 1 reset to clear the daily quota? {remaining}/{max} resets left this month.',
+      zeroUsageConfirm:
+        'Daily usage is 0. Resetting will not add quota but still consumes 1 reset. {remaining}/{max} resets left this month. Continue?',
+      success: 'Reset successful. {remaining}/{max} resets left this month',
+      failed: 'Reset failed. Please try again later',
+      reason: {
+        disabled: 'Self-reset is disabled by the administrator',
+        inactive: 'Subscription is inactive or expired',
+        notSubscription: 'This subscription type does not support self-reset',
+        noDailyLimit: 'This subscription has no daily quota configured',
+        noResets: 'No resets left this month'
+      }
+    },
     windowNotActive: 'Awaiting first use',
     usageOf: '{used} of {limit}'
   },
