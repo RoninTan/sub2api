@@ -8,6 +8,7 @@
         <p class="mt-0.5 text-xs text-gray-500 dark:text-dark-400">
           {{
             t('userSubscriptions.selfReset.remaining', {
+              period: periodLabel,
               remaining: status.remaining,
               max: status.max_resets
             })
@@ -66,6 +67,19 @@ const reasonText = computed(() => {
   }
 })
 
+const periodLabel = computed(() => {
+  switch (status.value?.period) {
+    case 'calendar_week':
+      return t('userSubscriptions.selfReset.period.week')
+    case 'calendar_month':
+      return t('userSubscriptions.selfReset.period.month')
+    case 'rolling_30d':
+      return t('userSubscriptions.selfReset.period.rolling30d')
+    default:
+      return t('userSubscriptions.selfReset.period.cycle')
+  }
+})
+
 async function loadStatus() {
   try {
     const list = await subscriptionsAPI.getSelfResetStatus()
@@ -82,10 +96,12 @@ async function handleReset() {
   const message =
     usage <= 0
       ? t('userSubscriptions.selfReset.zeroUsageConfirm', {
+          period: periodLabel.value,
           remaining: status.value.remaining,
           max: status.value.max_resets
         })
       : t('userSubscriptions.selfReset.confirm', {
+          period: periodLabel.value,
           used: usage.toFixed(2),
           limit: limit.toFixed(2),
           remaining: status.value.remaining,
@@ -98,6 +114,7 @@ async function handleReset() {
     const result = await subscriptionsAPI.selfResetQuota(props.subscriptionId)
     appStore.showSuccess(
       t('userSubscriptions.selfReset.success', {
+        period: periodLabel.value,
         remaining: result.remaining,
         max: result.max_resets
       })
