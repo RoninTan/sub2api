@@ -19,8 +19,8 @@ const (
 	SelfResetPeriodRolling30D    = "rolling_30d"
 	SelfResetPeriodCycle         = "subscription_cycle"
 
-	SelfResetScopeDaily    = "daily"
-	SelfResetScopeAll      = "all"
+	SelfResetScopeDaily     = "daily"
+	SelfResetScopeAll       = "all"
 	SelfResetScopeExhausted = "exhausted"
 
 	SelfResetPerUser         = "user"
@@ -158,7 +158,7 @@ func (s *SubscriptionService) GetSelfResetSettings(ctx context.Context) SelfRese
 	if err != nil {
 		return cfg
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	if !rows.Next() {
 		return cfg
 	}
@@ -239,7 +239,7 @@ func (s *SubscriptionService) selfResetCount(ctx context.Context, q selfResetQue
 	if err != nil {
 		return 0, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	if !rows.Next() {
 		return 0, nil
 	}
@@ -336,10 +336,10 @@ func (s *SubscriptionService) SelfResetQuota(ctx context.Context, userID, subscr
 		return nil, err
 	}
 	if !lockRows.Next() {
-		lockRows.Close()
+		_ = lockRows.Close()
 		return nil, ErrSelfResetNotFound
 	}
-	lockRows.Close()
+	_ = lockRows.Close()
 
 	rows, err := q.QueryContext(ctx, `
 		SELECT id, user_id, group_id, status, starts_at, expires_at,
@@ -351,20 +351,20 @@ func (s *SubscriptionService) SelfResetQuota(ctx context.Context, userID, subscr
 		return nil, err
 	}
 	if !rows.Next() {
-		rows.Close()
+		_ = rows.Close()
 		return nil, ErrSelfResetNotFound
 	}
 	var (
-		dbID, dbUserID, dbGroupID                       int64
-		dbStatus                                        string
-		startsAt, expiresAt                             time.Time
-		dailyUsage, weeklyUsage, monthlyUsage           float64
+		dbID, dbUserID, dbGroupID             int64
+		dbStatus                              string
+		startsAt, expiresAt                   time.Time
+		dailyUsage, weeklyUsage, monthlyUsage float64
 	)
 	if err := rows.Scan(&dbID, &dbUserID, &dbGroupID, &dbStatus, &startsAt, &expiresAt, &dailyUsage, &weeklyUsage, &monthlyUsage); err != nil {
-		rows.Close()
+		_ = rows.Close()
 		return nil, err
 	}
-	rows.Close()
+	_ = rows.Close()
 	if dbUserID != userID {
 		return nil, ErrSelfResetNotOwner
 	}
@@ -388,14 +388,14 @@ func (s *SubscriptionService) SelfResetQuota(ctx context.Context, userID, subscr
 		return nil, err
 	}
 	if !groupRows.Next() {
-		groupRows.Close()
+		_ = groupRows.Close()
 		return nil, ErrSelfResetNotSupported
 	}
 	if err := groupRows.Scan(&subscriptionType, &dailyLimit, &weeklyLimit, &monthlyLimit); err != nil {
-		groupRows.Close()
+		_ = groupRows.Close()
 		return nil, err
 	}
-	groupRows.Close()
+	_ = groupRows.Close()
 	if subscriptionType != SubscriptionTypeSubscription {
 		return nil, ErrSelfResetNotSupported
 	}
@@ -465,19 +465,18 @@ func (s *SubscriptionService) SelfResetQuota(ctx context.Context, userID, subscr
 		var last sql.NullTime
 		if cooldownRows.Next() {
 			if err := cooldownRows.Scan(&last); err != nil {
-				cooldownRows.Close()
+				_ = cooldownRows.Close()
 				return nil, err
 			}
 		}
-		cooldownRows.Close()
+		_ = cooldownRows.Close()
 		if last.Valid && now.Sub(last.Time) < time.Duration(cfg.CooldownMinutes)*time.Minute {
 			return nil, ErrSelfResetCooldown
 		}
 	}
 
-	newExpiresAt := expiresAt
 	if cfg.DeductDays > 0 {
-		newExpiresAt = expiresAt.AddDate(0, 0, -cfg.DeductDays)
+		newExpiresAt := expiresAt.AddDate(0, 0, -cfg.DeductDays)
 		if !newExpiresAt.After(now) {
 			return nil, ErrSelfResetDeduct
 		}
